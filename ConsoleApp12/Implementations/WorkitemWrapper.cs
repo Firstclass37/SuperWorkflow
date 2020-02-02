@@ -14,6 +14,8 @@ namespace ConsoleApp12.Implementations
 
         public bool WaitPrev { get; }
 
+        public bool Started { get; set; }
+
         public bool Completed { get; set; }
     }
 }

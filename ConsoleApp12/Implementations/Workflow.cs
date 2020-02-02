@@ -40,7 +40,7 @@ namespace ConsoleApp12.Implementations
         {
             if (_timer == null)
             {
-                Execute(_currentNodes.First().Value.WorkItem);
+                Execute(_currentNodes.First().Value);
                 _timer = new Timer(s => Run(), null, 0, 1);
             }
         }
@@ -65,15 +65,20 @@ namespace ConsoleApp12.Implementations
                 {
                     _currentNodes.Remove(node);
                     _currentNodes.AddRange(node.Next);
-                    Execute(node.Next.Select(n => n.Value.WorkItem).ToArray());
+                    Execute(node.Next.Select(n => n.Value).ToArray());
                 }
+                Execute(node.Next.Where(n => !n.Value.WaitPrev).Select(n => n.Value).ToArray());
             }
         }
 
-        private void Execute(params IWorkItem[] workItems)
+        private void Execute(params WorkitemWrapper[] workItems)
         {
             foreach (var item in workItems)
-                _taskRunner.Enqueue(item);
+                if (!item.Started)
+                {
+                    item.Started = true;
+                    _taskRunner.Enqueue(item.WorkItem);
+                }
         }
     }
 }
