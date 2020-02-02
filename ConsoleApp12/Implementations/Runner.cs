@@ -1,35 +1,36 @@
-﻿using System.Collections.Concurrent;
+﻿using ConsoleApp12.Interfaces;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ConsoleApp12
+namespace ConsoleApp12.Implementations
 {
-    internal class TaskRunner
+    public class Runner
     {
-        private readonly ConcurrentQueue<Task> _queue;
+        private readonly ConcurrentQueue<IWorkItem> _queue;
         private readonly ConcurrentDictionary<Task, bool> _running;
         private readonly Timer _timer;
         private readonly int _concurrent;
 
-        public TaskRunner(int concurrent)
+        public Runner(int concurrent)
         {
             _concurrent = concurrent;
             _running = new ConcurrentDictionary<Task, bool>();
-            _queue = new ConcurrentQueue<Task>();
+            _queue = new ConcurrentQueue<IWorkItem>();
             _timer = new Timer(s => Run(), null, 0, 1);
         }
 
-        public void Add(Task task)
+        public void Enqueue(IWorkItem workItem)
         {
-            _queue.Enqueue(task);
+            _queue.Enqueue(workItem);
         }
 
-        private bool TryRun(Task task)
+        private bool TryRun(IWorkItem workItem)
         {
             if (_running.Count == _concurrent)
                 return false;
 
-            task.ContinueWith(t => _running.TryRemove(t, out var _)).Start();
+            var task = Task.Factory.StartNew(() => workItem.Work()).ContinueWith(t => _running.TryRemove(t, out var _));
             _running.TryAdd(task, true);
             return true;
         }

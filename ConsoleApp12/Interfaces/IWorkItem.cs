@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp12
+﻿namespace ConsoleApp12.Interfaces
 {
     public interface IWorkItem
     {
