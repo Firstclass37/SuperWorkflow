@@ -4,7 +4,7 @@ namespace ConsoleApp12.Structure
 {
     internal class Node
     {
-        public Node(WorkitemWrapper value, WorkitemWrapper[] next)
+        public Node(WorkitemWrapper value, Node[] next)
         {
             Value = value;
             Next = next;
