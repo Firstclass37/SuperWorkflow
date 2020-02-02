@@ -51,6 +51,7 @@
     <Compile Include="Implementations\Workflow.cs" />
     <Compile Include="Interfaces\IWorkItem.cs" />
     <Compile Include="Structure\Node.cs" />
+    <Compile Include="Structure\NodeExtentions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

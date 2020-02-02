@@ -1,5 +1,6 @@
 ﻿using ConsoleApp12.Interfaces;
 using ConsoleApp12.Structure;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,13 +11,28 @@ namespace ConsoleApp12.Implementations
     {
         private readonly Runner _taskRunner;
         private readonly List<Node> _currentNodes;
+        private Node _head;
         private Timer _timer;
 
-        public Workflow(Runner taskRunner, Node startNode)
+        public Workflow(Runner taskRunner)
         {
             _taskRunner = taskRunner;
             _currentNodes = new List<Node>();
-            _currentNodes.Add(startNode);
+        }
+
+        public void SetStart(IWorkItem workItem)
+        {
+            _head = new Node(new WorkitemWrapper(workItem, false));
+        }
+
+        public void AddContinuation(IWorkItem workItem, IWorkItem[] continuation, bool needWait)
+        {
+            var node = _head.SearchNode(workItem);
+            if (node == null)
+                throw new ArgumentOutOfRangeException($"workitem doest not exit");
+
+            foreach (var i in continuation)
+                node.AddNext(new WorkitemWrapper(i, needWait));
         }
 
         public void Start()
@@ -43,7 +59,8 @@ namespace ConsoleApp12.Implementations
 
             foreach(var node in _currentNodes.ToArray())
             {
-                if (_taskRunner.Competed(node.Value.WorkItem) || !node.Value.Required)
+                var next = node.Next;
+                if (_taskRunner.Competed(node.Value.WorkItem))
                 {
                     _currentNodes.Remove(node);
                     _currentNodes.AddRange(node.Next);

@@ -1,17 +1,24 @@
 ﻿using ConsoleApp12.Implementations;
+using System.Collections.Generic;
 
 namespace ConsoleApp12.Structure
 {
     internal class Node
     {
-        public Node(WorkitemWrapper value, Node[] next)
+        private readonly List<Node> _next = new List<Node>();
+
+        public Node(WorkitemWrapper value)
         {
             Value = value;
-            Next = next;
         }
 
         public WorkitemWrapper Value { get; }
 
-        public Node[] Next { get; }
+        public IReadOnlyCollection<Node> Next => _next;
+
+        public void AddNext(WorkitemWrapper workitemWrapper)
+        {
+            _next.Add(new Node(workitemWrapper));
+        }
     }
 }

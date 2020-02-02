@@ -28,7 +28,12 @@ namespace ConsoleApp12.Implementations
 
         public bool Competed(IWorkItem workItem)
         {
-            return !_queue.Any(i => i == workItem) && !_running.Any(e => e.Key == workItem);
+            return !InQueue(workItem);
+        }
+
+        public bool InQueue(IWorkItem workItem)
+        {
+            return _queue.Any(i => i == workItem) || _running.Any(e => e.Key == workItem);
         }
 
         private bool TryRun(IWorkItem workItem)
