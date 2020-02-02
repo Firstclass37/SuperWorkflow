@@ -1,10 +1,10 @@
-﻿using ConsoleApp12.Interfaces;
+﻿using WorkflowApp.Interfaces;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ConsoleApp12.Implementations
+namespace WorkflowApp.Implementations
 {
     internal class Runner
     {

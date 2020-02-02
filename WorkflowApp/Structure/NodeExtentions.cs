@@ -1,7 +1,7 @@
-﻿using ConsoleApp12.Interfaces;
+﻿using WorkflowApp.Interfaces;
 using System.Linq;
 
-namespace ConsoleApp12.Structure
+namespace WorkflowApp.Structure
 {
     internal static class NodeExtentions
     {

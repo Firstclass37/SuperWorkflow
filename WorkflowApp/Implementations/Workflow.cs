@@ -1,11 +1,11 @@
-﻿using ConsoleApp12.Interfaces;
-using ConsoleApp12.Structure;
+﻿using WorkflowApp.Interfaces;
+using WorkflowApp.Structure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace ConsoleApp12.Implementations
+namespace WorkflowApp.Implementations
 {
     internal class Workflow: IWorkflow
     {

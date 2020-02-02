@@ -1,6 +1,6 @@
-﻿using ConsoleApp12.Interfaces;
+﻿using WorkflowApp.Interfaces;
 
-namespace ConsoleApp12.Implementations
+namespace WorkflowApp.Implementations
 {
     internal class WorkitemWrapper
     {

@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp12.Interfaces
+﻿namespace WorkflowApp.Interfaces
 {
     public interface IWorkflow
     {

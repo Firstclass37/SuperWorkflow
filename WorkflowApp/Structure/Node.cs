@@ -1,7 +1,7 @@
-﻿using ConsoleApp12.Implementations;
+﻿using WorkflowApp.Implementations;
 using System.Collections.Generic;
 
-namespace ConsoleApp12.Structure
+namespace WorkflowApp.Structure
 {
     internal class Node
     {
