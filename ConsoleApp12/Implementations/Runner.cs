@@ -1,11 +1,12 @@
 ﻿using ConsoleApp12.Interfaces;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleApp12.Implementations
 {
-    public class Runner
+    internal class Runner
     {
         private readonly ConcurrentQueue<IWorkItem> _queue;
         private readonly ConcurrentDictionary<Task, bool> _running;
@@ -23,6 +24,11 @@ namespace ConsoleApp12.Implementations
         public void Enqueue(IWorkItem workItem)
         {
             _queue.Enqueue(workItem);
+        }
+
+        public bool Competed(IWorkItem workItem)
+        {
+            return !_queue.Any(i => i == workItem) && !_running.Any(e => e.Key == workItem);
         }
 
         private bool TryRun(IWorkItem workItem)

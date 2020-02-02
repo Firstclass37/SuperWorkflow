@@ -3,7 +3,5 @@
     public interface IWorkflow
     {
         void Start();
-
-        void Add(IWorkItem workitem);
     }
 }
