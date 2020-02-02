@@ -22,7 +22,8 @@ namespace ConsoleApp12.Implementations
 
         public void SetStart(IWorkItem workItem)
         {
-            _head = new Node(new WorkitemWrapper(workItem, false));
+            if (_head != null)
+                _head = new Node(new WorkitemWrapper(workItem, false));
         }
 
         public void AddContinuation(IWorkItem workItem, IWorkItem[] continuation, bool needWait)
