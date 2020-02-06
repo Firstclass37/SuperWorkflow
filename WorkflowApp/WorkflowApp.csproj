@@ -44,8 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementations\RunnerManager.cs" />
+    <Compile Include="Implementations\RunnerPool.cs" />
     <Compile Include="Implementations\WorkitemWrapper.cs" />
+    <Compile Include="Interfaces\IRunner.cs" />
     <Compile Include="Interfaces\IRunnerManager.cs" />
+    <Compile Include="Interfaces\IRunnerPool.cs" />
     <Compile Include="Interfaces\IWorkflow.cs" />
     <Compile Include="Interfaces\IWorkitemCollection.cs" />
     <Compile Include="Interfaces\IHandler.cs" />

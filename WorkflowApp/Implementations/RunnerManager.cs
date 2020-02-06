@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 using WorkflowApp.Interfaces;
 
@@ -9,7 +8,12 @@ namespace WorkflowApp.Implementations
     public class RunnerManager : IRunnerManager
     {
         private readonly ConcurrentDictionary<Guid, IHandler> _sources = new ConcurrentDictionary<Guid, IHandler>();
-        private readonly Runner[] _runners = new Runner[] { new Runner(4) };
+        private readonly IRunnerPool _runnerPool;
+
+        public RunnerManager(IRunnerPool runnerPool)
+        {
+            _runnerPool = runnerPool;
+        }
 
         public void RegisterSource(Guid sourceId, IHandler handler)
         {
@@ -19,14 +23,9 @@ namespace WorkflowApp.Implementations
 
         public void Enqueue(Guid sourceId, IWorkItem item)
         {
-            SelectRunner().Enqueue(item).ContinueWith(t => EndExecution(t, sourceId));
+            _runnerPool.Enqueue(item).ContinueWith(t => EndExecution(t, sourceId));
         }
 
-        private Runner SelectRunner()
-        {
-            return _runners.OrderBy(r => r.QueueLength).First();
-        }
-       
         private void EndExecution(Task<IWorkItem> task, Guid sourceId)
         {
             var handler = _sources[sourceId];
