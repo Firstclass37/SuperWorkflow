@@ -43,8 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementations\RunnerManager.cs" />
     <Compile Include="Implementations\WorkitemWrapper.cs" />
+    <Compile Include="Interfaces\IRunnerManager.cs" />
     <Compile Include="Interfaces\IWorkflow.cs" />
+    <Compile Include="Interfaces\IWorkitemCollection.cs" />
+    <Compile Include="Interfaces\IHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementations\Runner.cs" />

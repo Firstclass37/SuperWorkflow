@@ -1,6 +1,5 @@
 ﻿using WorkflowApp.Interfaces;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +7,7 @@ namespace WorkflowApp.Implementations
 {
     internal class Runner
     {
-        private readonly ConcurrentQueue<IWorkItem> _queue;
+        private readonly ConcurrentQueue<Task<IWorkItem>> _queue;
         private readonly ConcurrentDictionary<Task, bool> _running;
         private readonly Timer _timer;
         private readonly int _concurrent;
@@ -17,31 +16,25 @@ namespace WorkflowApp.Implementations
         {
             _concurrent = concurrent;
             _running = new ConcurrentDictionary<Task, bool>();
-            _queue = new ConcurrentQueue<IWorkItem>();
+            _queue = new ConcurrentQueue<Task<IWorkItem>>();
             _timer = new Timer(s => Run(), null, 0, 1);
         }
 
-        public void Enqueue(IWorkItem workItem)
+        public int QueueLength => _queue.Count;
+
+        public Task<IWorkItem> Enqueue(IWorkItem workItem)
         {
-            _queue.Enqueue(workItem);
+            var task = new Task<IWorkItem>(() => { workItem.Work(); return workItem; });
+            _queue.Enqueue(task);
+            return task;
         }
 
-        public bool Competed(IWorkItem workItem)
-        {
-            return !InQueue(workItem);
-        }
-
-        public bool InQueue(IWorkItem workItem)
-        {
-            return _queue.Any(i => i == workItem) || _running.Any(e => e.Key == workItem);
-        }
-
-        private bool TryRun(IWorkItem workItem)
+        private bool TryRun(Task<IWorkItem> task)
         {
             if (_running.Count == _concurrent)
                 return false;
 
-            var task = Task.Factory.StartNew(() => workItem.Work()).ContinueWith(t => _running.TryRemove(t, out var _));
+            task.ContinueWith(t => _running.TryRemove(t, out var _)).Start();
             _running.TryAdd(task, true);
             return true;
         }

@@ -1,84 +1,42 @@
-﻿using WorkflowApp.Interfaces;
-using WorkflowApp.Structure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System;
+using WorkflowApp.Interfaces;
 
 namespace WorkflowApp.Implementations
 {
-    internal class Workflow: IWorkflow
+    internal class Workflow: IWorkflow, IHandler
     {
-        private readonly Runner _taskRunner;
-        private readonly List<Node> _currentNodes;
-        private Node _head;
-        private Timer _timer;
+        private readonly IRunnerManager _runnerManager;
+        private readonly IWorkitemCollection _workitemCollection;
 
-        public Workflow(Runner taskRunner)
+        public Workflow(IRunnerManager runnerManager, IWorkitemCollection workitemCollection)
         {
-            _taskRunner = taskRunner;
-            _currentNodes = new List<Node>();
+            runnerManager.RegisterSource(Id, this);
+            _runnerManager = runnerManager;
+            _workitemCollection = workitemCollection;
         }
 
-        public void SetStart(IWorkItem workItem)
-        {
-            if (_head != null)
-                _head = new Node(new WorkitemWrapper(workItem, false));
-        }
-
-        public void AddContinuation(IWorkItem workItem, IWorkItem[] continuation, bool needWait)
-        {
-            var node = _head.SearchNode(workItem);
-            if (node == null)
-                throw new ArgumentOutOfRangeException($"workitem doest not exit");
-
-            foreach (var i in continuation)
-                node.AddNext(new WorkitemWrapper(i, needWait));
-        }
+        public Guid Id => Guid.Parse("1AC7FC01-7869-489C-973B-1DE6C3FE9DF1");
 
         public void Start()
         {
-            if (_timer == null)
-            {
-                Execute(_currentNodes.First().Value);
-                _timer = new Timer(s => Run(), null, 0, 1);
-            }
+            _runnerManager.Enqueue(Id, _workitemCollection.GetFirst());
         }
-
-        public bool Completed()
+      
+        public void OnWorkCompleted(IWorkItem item)
         {
-            return !_currentNodes.Any();
+            Execute(_workitemCollection.GetNext(item, true));
+            Execute(_workitemCollection.GetNext(item, false));
         }
 
-        private void Run()
+        public void OnException(IWorkItem item, Exception e)
         {
-            if (Completed())
-            {
-                _timer.Dispose();
-                return;
-            }
-
-            foreach(var node in _currentNodes.ToArray())
-            {
-                var next = node.Next;
-                if (_taskRunner.Competed(node.Value.WorkItem))
-                {
-                    _currentNodes.Remove(node);
-                    _currentNodes.AddRange(node.Next);
-                    Execute(node.Next.Select(n => n.Value).ToArray());
-                }
-                Execute(node.Next.Where(n => !n.Value.WaitPrev).Select(n => n.Value).ToArray());
-            }
+            throw new NotImplementedException();
         }
 
-        private void Execute(params WorkitemWrapper[] workItems)
+        private void Execute(params IWorkItem[] workItems)
         {
             foreach (var item in workItems)
-                if (!item.Started)
-                {
-                    item.Started = true;
-                    _taskRunner.Enqueue(item.WorkItem);
-                }
+                _runnerManager.Enqueue(Id, item);
         }
     }
 }
