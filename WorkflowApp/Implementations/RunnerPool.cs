@@ -13,9 +13,9 @@ namespace WorkflowApp.Implementations
             _runners = runner;
         }
 
-        public Task<IWorkItem> Enqueue(IWorkItem workItem)
+        public Task<ExecutionResult> Enqueue(ExecutionTask executetionTask)
         {
-            return _runners.OrderBy(r => r.QueueLength).First().Enqueue(workItem);
+            return _runners.OrderBy(r => r.QueueLength).First().Enqueue(executetionTask);
         }
     }
 }

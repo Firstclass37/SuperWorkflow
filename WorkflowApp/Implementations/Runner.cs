@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace WorkflowApp.Implementations
 {
-    internal class Runner
+    internal class Runner: IRunner
     {
-        private readonly ConcurrentQueue<Task<IWorkItem>> _queue;
+        private readonly ConcurrentQueue<Task<ExecutionResult>> _queue;
         private readonly ConcurrentDictionary<Task, bool> _running;
         private readonly Timer _timer;
         private readonly int _concurrent;
@@ -16,20 +16,20 @@ namespace WorkflowApp.Implementations
         {
             _concurrent = concurrent;
             _running = new ConcurrentDictionary<Task, bool>();
-            _queue = new ConcurrentQueue<Task<IWorkItem>>();
+            _queue = new ConcurrentQueue<Task<ExecutionResult>>();
             _timer = new Timer(s => Run(), null, 0, 1);
         }
 
         public int QueueLength => _queue.Count;
 
-        public Task<IWorkItem> Enqueue(IWorkItem workItem)
+        public Task<ExecutionResult> Enqueue(ExecutionTask executetionTask)
         {
-            var task = new Task<IWorkItem>(() => { workItem.Work(); return workItem; });
+            var task = new Task<ExecutionResult>(() => Execute(executetionTask));
             _queue.Enqueue(task);
             return task;
         }
 
-        private bool TryRun(Task<IWorkItem> task)
+        private bool TryRun(Task<ExecutionResult> task)
         {
             if (_running.Count == _concurrent)
                 return false;
@@ -43,6 +43,12 @@ namespace WorkflowApp.Implementations
         {
             while (_queue.TryPeek(out var t) && TryRun(t))
                 _queue.TryDequeue(out var _);
+        }
+
+        private ExecutionResult Execute(ExecutionTask executetionTask)
+        {
+            var result = executetionTask.WorkItem.Work(executetionTask.PreviousItemResult?.Result);
+            return new ExecutionResult(executetionTask.WorkItem, result);
         }
     }
 }

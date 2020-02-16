@@ -21,18 +21,18 @@ namespace WorkflowApp.Implementations
                 throw new Exception($"source {sourceId} was already registered");
         }
 
-        public void Enqueue(Guid sourceId, IWorkItem item)
+        public void Enqueue(Guid sourceId, ExecutionTask executetionTask)
         {
-            _runnerPool.Enqueue(item).ContinueWith(t => EndExecution(t, sourceId));
+            _runnerPool.Enqueue(executetionTask).ContinueWith(t => EndExecution(t, sourceId));
         }
 
-        private void EndExecution(Task<IWorkItem> task, Guid sourceId)
+        private void EndExecution(Task<ExecutionResult> task, Guid sourceId)
         {
             var handler = _sources[sourceId];
             if (task.IsCompleted)
                 handler.OnWorkCompleted(task.Result);
             else if (task.IsFaulted)
-                handler.OnException(task.Result, task.Exception);
+                handler.OnException(task.Result.WorkItem, task.Exception);
         }
     }
 }

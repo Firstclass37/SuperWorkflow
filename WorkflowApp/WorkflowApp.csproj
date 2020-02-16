@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementations\ExecutionTask.cs" />
+    <Compile Include="Implementations\ExecutionResult.cs" />
     <Compile Include="Implementations\RunnerManager.cs" />
     <Compile Include="Implementations\RunnerPool.cs" />
     <Compile Include="Implementations\WorkitemWrapper.cs" />

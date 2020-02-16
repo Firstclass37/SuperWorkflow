@@ -1,11 +1,12 @@
 ﻿using System;
+using WorkflowApp.Implementations;
 
 namespace WorkflowApp.Interfaces
 {
-    internal interface IRunnerManager
+    public interface IRunnerManager
     {
         void RegisterSource(Guid sourceId, IHandler handler);
 
-        void Enqueue(Guid sourceId, IWorkItem item);
+        void Enqueue(Guid sourceId, ExecutionTask executetionTask);
     }
 }

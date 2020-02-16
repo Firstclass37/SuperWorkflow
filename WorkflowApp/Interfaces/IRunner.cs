@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using WorkflowApp.Implementations;
 
 namespace WorkflowApp.Interfaces
 {
@@ -6,6 +7,6 @@ namespace WorkflowApp.Interfaces
     {
         int QueueLength { get; }
 
-        Task<IWorkItem> Enqueue(IWorkItem workItem);
+        Task<ExecutionResult> Enqueue(ExecutionTask executetionTask);
     }
 }

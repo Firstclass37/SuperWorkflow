@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using WorkflowApp.Interfaces;
 
 namespace WorkflowApp.Implementations
@@ -19,13 +20,13 @@ namespace WorkflowApp.Implementations
 
         public void Start()
         {
-            _runnerManager.Enqueue(Id, _workitemCollection.GetFirst());
+            _runnerManager.Enqueue(Id, new ExecutionTask(_workitemCollection.GetFirst()));
         }
       
-        public void OnWorkCompleted(IWorkItem item)
+        public void OnWorkCompleted(ExecutionResult executionResult)
         {
-            Execute(_workitemCollection.GetNext(item, true));
-            Execute(_workitemCollection.GetNext(item, false));
+            Execute(_workitemCollection.GetNext(executionResult.WorkItem, true).Select(i => new ExecutionTask(i, executionResult)).ToArray());
+            Execute(_workitemCollection.GetNext(executionResult.WorkItem, false).Select(i => new ExecutionTask(i, executionResult)).ToArray());
         }
 
         public void OnException(IWorkItem item, Exception e)
@@ -33,10 +34,10 @@ namespace WorkflowApp.Implementations
             throw new NotImplementedException();
         }
 
-        private void Execute(params IWorkItem[] workItems)
+        private void Execute(params ExecutionTask[] executetionTasks)
         {
-            foreach (var item in workItems)
-                _runnerManager.Enqueue(Id, item);
+            foreach (var task in executetionTasks)
+                _runnerManager.Enqueue(Id, task);
         }
     }
 }

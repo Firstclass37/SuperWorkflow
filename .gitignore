@@ -175,3 +175,4 @@ src/ResourceWithIdentityServerWithClient/ResourceWithIdentityServerWithClient.cs
 /src/AngularClientCode/angularApp/vendor.js
 /src/AngularClientCode/AngularClientCode.csproj.user
 /WorkflowApp/obj/Debug
+/WorkflowApp/bin/Debug

@@ -2,6 +2,6 @@
 {
     public interface IWorkItem
     {
-        void Work();
+        object Work(object obj);
     }
 }
